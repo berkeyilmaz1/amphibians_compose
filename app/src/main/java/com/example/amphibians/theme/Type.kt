@@ -1,4 +1,4 @@
-package com.example.amphibians.ui.theme
+package com.example.amphibians.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
