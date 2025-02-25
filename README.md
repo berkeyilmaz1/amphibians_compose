@@ -1,5 +1,6 @@
 # Amphibians Compose
 
+<img src="https://github.com/user-attachments/assets/e9be9ade-6999-4856-b48b-77e232040087" width="200">
 
 
 ## Overview
