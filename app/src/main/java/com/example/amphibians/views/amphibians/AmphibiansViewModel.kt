@@ -1,5 +1,6 @@
-package com.example.amphibians.views
+package com.example.amphibians.views.amphibians
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,17 +9,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import coil.network.HttpException
 import com.example.amphibians.AmphibiansApplication
+import com.example.amphibians.R
 import com.example.amphibians.data.AmphibiansRepository
 import com.example.amphibians.model.Amphibian
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 sealed interface AmphibiansUiState {
     data class Success(val data: List<Amphibian>) : AmphibiansUiState
-    data object Loading : AmphibiansUiState
-    data class Error(val message: String) : AmphibiansUiState
+    object Loading : AmphibiansUiState
+    data class Error(val message: Int) : AmphibiansUiState
 }
 
 class AmphibiansViewModel(val amphibiansRepository: AmphibiansRepository) : ViewModel() {
@@ -30,20 +33,24 @@ class AmphibiansViewModel(val amphibiansRepository: AmphibiansRepository) : View
         getAmphibians()
     }
 
-    private fun getAmphibians() {
+    fun getAmphibians() {
+        amphibiansUiState = AmphibiansUiState.Loading
         viewModelScope.launch {
-            amphibiansUiState = AmphibiansUiState.Loading
-            try {
-                amphibiansUiState = AmphibiansUiState.Success(amphibiansRepository.getAmphibians())
+            amphibiansUiState = try {
+                withContext(Dispatchers.IO) {
+                    val result = amphibiansRepository.getAmphibians()
+                    AmphibiansUiState.Success(result)
+                }
             } catch (e: IOException) {
-                amphibiansUiState = AmphibiansUiState.Error("Error loading amphibians")
-            } catch (e: HttpException) {
-                amphibiansUiState = AmphibiansUiState.Error("Error loading amphibians")
+                Log.e("AmphibiansViewModel", "IO Exception: ${e.message}")
+                AmphibiansUiState.Error(R.string.connection_error)
             } catch (e: Exception) {
-                amphibiansUiState = AmphibiansUiState.Error("An error occurred")
+                Log.e("AmphibiansViewModel", "Unexpected error: ${e.message}")
+                AmphibiansUiState.Error(R.string.error)
             }
         }
     }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

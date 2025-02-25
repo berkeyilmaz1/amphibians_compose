@@ -48,13 +48,22 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    // ViewModel 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+
+    implementation (libs.retrofit2.converter.gson)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.retrofit)
-    implementation(libs.coil.compose)
+
+    //Coil
+    implementation(libs.coil3.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
 
     implementation(libs.kotlinx.serialization.json)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
